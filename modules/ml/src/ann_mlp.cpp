@@ -178,6 +178,7 @@ public:
     inline void setAnnealCoolingRatio(double val) CV_OVERRIDE { params.coolingRatio = val; }
     inline int getAnnealItePerStep() const CV_OVERRIDE { return params.itePerStep; }
     inline void setAnnealItePerStep(int val) CV_OVERRIDE { params.itePerStep = val; }
+    inline void setIsClassifier(bool val) CV_OVERRIDE { classifier = val; }
     // disabled getAnnealEnergyRNG()
     inline void setAnnealEnergyRNG(const RNG& val) CV_OVERRIDE { params.rEnergy = val; }
 
@@ -187,6 +188,7 @@ public:
         rng = RNG((uint64)-1);
         weights.clear();
         trained = false;
+        classifier = true;
         max_buf_sz = 1 << 12;
     }
 
@@ -1483,7 +1485,7 @@ public:
 
     bool isClassifier() const CV_OVERRIDE
     {
-        return false;
+        return classifier;
     }
 
     int getVarCount() const CV_OVERRIDE
@@ -1506,6 +1508,7 @@ public:
     RNG rng;
     Mutex mtx;
     bool trained;
+    bool classifier;
 };
 
 

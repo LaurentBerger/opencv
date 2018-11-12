@@ -1539,6 +1539,8 @@ public:
     /** @copybrief getAnnealItePerStep @see getAnnealItePerStep */
     CV_WRAP virtual void setAnnealItePerStep(int val) = 0;
 
+    /** @brief true Set ANN_MLP as a classifier, false a regression model */
+    CV_WRAP virtual void setIsClassifier(bool val) = 0;
     /** @brief Set/initialize anneal RNG */
     virtual void setAnnealEnergyRNG(const RNG& rng) = 0;
 

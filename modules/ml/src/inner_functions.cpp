@@ -110,7 +110,7 @@ public:
             int si = sidx_ptr ? sidx_ptr[i] : i;
             double sweight = sw ? static_cast<double>(sw[i]) : 1.;
             Mat sample = layout == ROW_SAMPLE ? samples.row(si) : samples.col(si);
-            if (responses.cols == 1)
+            if (isclassifier)
             {
                 float val = s.predict(sample);
                 float val0 = (responses_type == CV_32S) ? (float)responses.at<int>(si) : responses.at<float>(si);
