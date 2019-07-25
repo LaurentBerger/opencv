@@ -53,6 +53,8 @@ const char* keys =
 
 int main( int argc, const char** argv )
 {
+    Mat toto(512, 512, CV_8UC3);
+    imread("g:/lib/opencv/samples/data/lena.jpg",toto);
     help();
     CommandLineParser parser(argc, argv, keys);
     string filename = parser.get<string>(0);

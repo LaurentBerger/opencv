@@ -614,7 +614,7 @@ imreadmulti_(const String& filename, int flags, std::vector<Mat>& mats)
  * @param[in] filename File to load
  * @param[in] flags Flags you wish to set.
 */
-Mat imread( const String& filename, int flags )
+Mat imread(const String& filename, int flags)
 {
     CV_TRACE_FUNCTION();
 
@@ -622,10 +622,10 @@ Mat imread( const String& filename, int flags )
     Mat img;
 
     /// load the data
-    imread_( filename, flags, img );
+    imread_(filename, flags, img);
 
     /// optionally rotate the data if EXIF' orientation flag says so
-    if( !img.empty() && (flags & IMREAD_IGNORE_ORIENTATION) == 0 && flags != IMREAD_UNCHANGED )
+    if (!img.empty() && (flags & IMREAD_IGNORE_ORIENTATION) == 0 && flags != IMREAD_UNCHANGED)
     {
         ApplyExifOrientation(filename, img);
     }
@@ -633,6 +633,27 @@ Mat imread( const String& filename, int flags )
     /// return a reference to the data
     return img;
 }
+
+Mat imread(const String& filename,  InputOutputArray dst,int flags)
+{
+    CV_TRACE_FUNCTION();
+
+    /// create the basic container
+    Mat img=dst.getMat();
+
+    /// load the data
+    imread_(filename, flags, img);
+
+    /// optionally rotate the data if EXIF' orientation flag says so
+    if (!img.empty() && (flags & IMREAD_IGNORE_ORIENTATION) == 0 && flags != IMREAD_UNCHANGED)
+    {
+        ApplyExifOrientation(filename, img);
+    }
+
+    /// return a reference to the data
+    return img;
+}
+
 
 /**
 * Read a multi-page image
