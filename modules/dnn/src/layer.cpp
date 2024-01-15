@@ -24,6 +24,10 @@ void Layer::setParamsFrom(const LayerParams& params)
     blobs = params.blobs;
     name = params.name;
     type = params.type;
+    if (params.has("has_dynamic_shapes"))
+        hasDynamicShape = params.get<bool>("has_dynamic_shapes");
+    else
+        hasDynamicShape = false;
 }
 
 int Layer::inputNameToIndex(String)

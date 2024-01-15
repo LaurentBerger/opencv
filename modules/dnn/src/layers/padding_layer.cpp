@@ -39,16 +39,19 @@ public:
         inputDims = params.get<int>("input_dims", -1);
         paddingType = params.get<String>("type", "constant");
 
-        CV_Assert(params.has("paddings"));
-        const DictValue& paddingsParam = params.get("paddings");
-        CV_Assert((paddingsParam.size() & 1) == 0);
-
-        paddings.resize(paddingsParam.size() / 2);
-        for (int i = 0; i < paddings.size(); ++i)
+        if (!params.get<bool>("has_dynamic_shapes"))
         {
-            paddings[i].first = paddingsParam.get<int>(i * 2);  // Pad before.
-            paddings[i].second = paddingsParam.get<int>(i * 2 + 1);  // Pad after.
-            CV_Assert_N(paddings[i].first >= 0, paddings[i].second >= 0);
+            CV_Assert(params.has("paddings"));
+            const DictValue& paddingsParam = params.get("paddings");
+            CV_Assert((paddingsParam.size() & 1) == 0);
+
+            paddings.resize(paddingsParam.size() / 2);
+            for (int i = 0; i < paddings.size(); ++i)
+            {
+                paddings[i].first = paddingsParam.get<int>(i * 2);  // Pad before.
+                paddings[i].second = paddingsParam.get<int>(i * 2 + 1);  // Pad after.
+                CV_Assert_N(paddings[i].first >= 0, paddings[i].second >= 0);
+            }
         }
     }
 
@@ -57,16 +60,23 @@ public:
                          std::vector<MatShape> &outputs,
                          std::vector<MatShape> &internals) const CV_OVERRIDE
     {
-        CV_Assert(inputs.size() == 1);
-        const MatShape& inpShape = inputs[0];
-        CV_Assert(inpShape.size() >= paddings.size());
-        CV_Assert(inputDims == -1 || inpShape.size() == inputDims || inpShape.size() > paddings.size());
-
-        outputs.resize(1, inpShape);
-        int offset = (inputDims == -1 ? 0 : (inpShape.size() > inputDims ? 1 : 0));
-        for (int i = 0; i < paddings.size(); ++i)
+        if (hasDynamicShape)
         {
-            outputs[0][offset + i] = inpShape[offset + i] + paddings[i].first + paddings[i].second;
+        //
+        }
+        else
+        {
+            CV_Assert(inputs.size() == 1);
+            const MatShape& inpShape = inputs[0];
+            CV_Assert(inpShape.size() >= paddings.size());
+            CV_Assert(inputDims == -1 || inpShape.size() == inputDims || inpShape.size() > paddings.size());
+
+            outputs.resize(1, inpShape);
+            int offset = (inputDims == -1 ? 0 : (inpShape.size() > inputDims ? 1 : 0));
+            for (int i = 0; i < paddings.size(); ++i)
+            {
+                outputs[0][offset + i] = inpShape[offset + i] + paddings[i].first + paddings[i].second;
+            }
         }
         return false;
     }

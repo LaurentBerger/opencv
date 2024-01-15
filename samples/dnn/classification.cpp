@@ -44,6 +44,16 @@ std::vector<std::string> classes;
 
 int main(int argc, char** argv)
 {
+    {
+        Net netPad = readNet("c:/users/laurent/desktop/onnx_test/test_pad.onnx");
+        Mat inpx = (Mat_<int>(3, 2) << 10, 11, 12, 13, 14, 15);
+        Mat inpa = (Mat_<int>(2, 1) << 1, 2);
+        Mat inpb = (Mat_<int>(2, 1) << 3, 1);
+        netPad.setInput(inpx, "inpx");
+        netPad.setInput(inpa, "inpa");
+        netPad.setInput(inpb, "inpb");
+        Mat c = netPad.forward();
+    }
     CommandLineParser parser(argc, argv, keys);
 
     const std::string modelName = parser.get<String>("@alias");

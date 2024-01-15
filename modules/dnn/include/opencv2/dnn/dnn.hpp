@@ -453,6 +453,7 @@ CV__DNN_INLINE_NS_BEGIN
 
         CV_PROP String name; //!< Name of the layer instance, can be used for logging or other internal purposes.
         CV_PROP String type; //!< Type name which was used for creating layer by layer factory.
+        CV_PROP bool hasDynamicShape; //!< hasDynamicShape true when layer output size is not known when network is loaded.
         CV_PROP int preferableTarget; //!< prefer target for layer forwarding
 
         Layer();
