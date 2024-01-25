@@ -191,6 +191,19 @@ void Net::setParam(int layer, int numParam, const Mat& blob)
     return impl->setParam(layer, numParam, blob);
 }
 
+void Net::setInferenceShape(bool val)
+{
+    CV_Assert(impl);
+    return impl->setInferenceShape(val);
+}
+
+bool Net::getInferenceShape()
+{
+    CV_Assert(impl);
+    return impl->getInferenceShape();
+}
+
+
 int Net::getLayerId(const String& layer) const
 {
     CV_Assert(impl);

@@ -59,12 +59,23 @@ Net::Impl::Impl()
     preferableTarget = DNN_TARGET_CPU;
     hasDynamicShapes = false;
     useWinograd = true;
+    inferenceShape = false;
 }
 
 
 bool Net::Impl::empty() const
 {
     return layers.size() <= 1;  // first layer is default Data layer
+}
+
+bool Net::Impl::getInferenceShape() const
+{
+    return inferenceShape;
+}
+
+void Net::Impl::setInferenceShape(bool v)
+{
+    inferenceShape = v;
 }
 
 
@@ -196,7 +207,8 @@ void Net::Impl::setUpNet(const std::vector<LayerPin>& blobsToKeep_)
 
         this->blobsToKeep = blobsToKeep_;
 
-        allocateLayers(blobsToKeep_);
+        if (!getInferenceShape())
+            allocateLayers(blobsToKeep_);
 
         MapIdToLayerData::iterator it = layers.find(0);
         CV_Assert(it != layers.end());

@@ -56,6 +56,7 @@ struct Net::Impl : public detail::NetImplBase
     int preferableTarget;
     String halideConfigFile;
     bool hasDynamicShapes;
+    bool inferenceShape; // shape is known at inference time
     // Map host data to backend specific wrapper.
     std::map<void*, Ptr<BackendWrapper>> backendWrappers;
 
@@ -72,6 +73,9 @@ struct Net::Impl : public detail::NetImplBase
     virtual bool empty() const;
     virtual void setPreferableBackend(Net& net, int backendId);
     virtual void setPreferableTarget(int targetId);
+
+    virtual bool getInferenceShape() const;
+    virtual void setInferenceShape(bool);
 
     // FIXIT use inheritance
     virtual Ptr<BackendWrapper> wrap(Mat& host);

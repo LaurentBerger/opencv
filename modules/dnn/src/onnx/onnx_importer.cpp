@@ -2394,7 +2394,10 @@ void ONNXImporter::parsePad(LayerParams& layerParams, const opencv_onnx::NodePro
             }
         }
         else
-            layerParams.set("has_dynamic_shapes", true);
+        {
+            layerParams.inferenceShape = true;
+            this->dstNet.setInferenceShape(true);
+        }
     }
     addLayer(layerParams, node_proto);
 }

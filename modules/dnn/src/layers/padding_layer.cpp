@@ -39,7 +39,7 @@ public:
         inputDims = params.get<int>("input_dims", -1);
         paddingType = params.get<String>("type", "constant");
 
-        if (!params.get<bool>("has_dynamic_shapes"))
+        if (!params.inferenceShape)
         {
             CV_Assert(params.has("paddings"));
             const DictValue& paddingsParam = params.get("paddings");
@@ -60,7 +60,7 @@ public:
                          std::vector<MatShape> &outputs,
                          std::vector<MatShape> &internals) const CV_OVERRIDE
     {
-        if (hasDynamicShape)
+        if (inferenceShape)
         {
         //
         }

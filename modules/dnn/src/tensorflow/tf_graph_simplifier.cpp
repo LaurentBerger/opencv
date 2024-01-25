@@ -884,8 +884,10 @@ Mat getTensorContentRef_(const tensorflow::TensorProto& tensor)
             else
             {
                 const RepeatedField<float>& field = tensor.float_val();
-                CV_Assert(!field.empty());
-                m = Mat(1, field.size(), CV_32FC1, (void*)field.data());
+                if (field.empty())
+                    m = Mat(1, 1, CV_32FC1, Scalar::all(0));
+                else
+                    m = Mat(1, field.size(), CV_32FC1, (void*)field.data());
             }
             break;
         }

@@ -45,15 +45,87 @@ std::vector<std::string> classes;
 int main(int argc, char** argv)
 {
     {
+        Net netNihil;
+        std::vector< String > inputBlobNames = {"inpa", "inpb" };
+        std::vector<int> sza = { 1, 2 };
+        LayerParams params;
+        // netNihil.addLayer(inputBlobNames[0], "__NetInputLayer__", params);
+        params.blobs = { Mat(sza, CV_32FC1) };
+        netNihil.addLayer(inputBlobNames[0], "Const", params);
+        params.blobs = { Mat(sza, CV_32FC1) };
+        netNihil.addLayer(inputBlobNames[1], "Const", params);
+        netNihil.setInputsNames(inputBlobNames);
+        netNihil.setInputShape(inputBlobNames[0], MatShape(sza));
+        netNihil.setInputShape(inputBlobNames[1], MatShape(sza));
+        params.blobs = { Mat(sza, CV_32FC1), Mat(sza, CV_32FC1) };
+
+        netNihil.addLayer("Concat1", "Concat", params);
+        int idInpa = netNihil.getLayerId(inputBlobNames[0]);
+        int idInpb = netNihil.getLayerId(inputBlobNames[1]);
+        int idAdd1 = netNihil.getLayerId("Concat1");
+        netNihil.connect(inputBlobNames[0], "Concat1");
+        netNihil.connect(idInpb, 0, idAdd1, 1);
+        netNihil.setInput(Mat(sza, CV_32FC1), inputBlobNames[0]);
+        netNihil.setInput(Mat(sza, CV_32FC1), inputBlobNames[1]);
+        netNihil.forward();
+        std::string texte = netNihil.dump();
+    }
+    {
+        Net netNihil;
+        std::vector< String > inputBlobNames = { "inpx", "inpa", "inpb" };
+        std::vector<int> szx = { 3, 2 };
+        std::vector<int> sza = { 1, 2 };
+        LayerParams params;
+        params.blobs = { Mat(szx, CV_32FC1) };
+        // netNihil.addLayer(inputBlobNames[0], "__NetInputLayer__", params);
+        netNihil.addLayer(inputBlobNames[0], "Const", params);
+        params.blobs = { Mat(sza, CV_32FC1) };
+        netNihil.addLayer(inputBlobNames[1], "Const", params);
+        params.blobs = { Mat(sza, CV_32FC1) };
+        netNihil.addLayer(inputBlobNames[2], "Const", params);
+        netNihil.setInputsNames(inputBlobNames);
+        netNihil.setInputShape(inputBlobNames[0], MatShape(szx));
+        netNihil.setInputShape(inputBlobNames[1], MatShape(sza));
+        netNihil.setInputShape(inputBlobNames[2], MatShape(sza));
+        params.blobs = { Mat(sza, CV_32FC1), Mat(sza, CV_32FC1) };
+
+        params.set<int>("axis", 0);
+        netNihil.addLayer("Concat1", "Concat", params);
+        int idInpx = netNihil.getLayerId(inputBlobNames[0]);
+        int idInpa = netNihil.getLayerId(inputBlobNames[1]);
+        int idInpb = netNihil.getLayerId(inputBlobNames[2]);
+        int idConcat1 = netNihil.getLayerId("Concat1");
+        netNihil.connect(inputBlobNames[0], "Concat1");
+        netNihil.connect(idInpa,0, idConcat1, 1);
+        netNihil.setInput(Mat(szx, CV_32FC1), inputBlobNames[0]);
+        netNihil.setInput(Mat(sza, CV_32FC1), inputBlobNames[1]);
+        netNihil.setInput(Mat(sza, CV_32FC1), inputBlobNames[2]);
+        netNihil.forward();
+        std::string texte=netNihil.dump();
+    }
+    {
+        Net netAdd = readNet("c:/users/laurent/desktop/onnx_test/test_add.onnx");
+        std::vector<int> szx = { 1, 4, 2 ,2 };
+        Mat inpx(szx, CV_32FC1, Scalar::all(1));
+        netAdd.setInput(inpx, "inpx");
+        //        Mat c = netAdd.forward();
+    }
+    {
         Net netPad = readNet("c:/users/laurent/desktop/onnx_test/test_pad.onnx");
-        Mat inpx = (Mat_<int>(3, 2) << 10, 11, 12, 13, 14, 15);
-        Mat inpa = (Mat_<int>(2, 1) << 1, 2);
-        Mat inpb = (Mat_<int>(2, 1) << 3, 1);
+        Mat inpx = (Mat_<float>(3, 2) << 10, 11, 12, 13, 14, 15);
+        Mat inpa = (Mat_<float>(2, 1) << 1, 2);
+        Mat inpb = (Mat_<float>(2, 1) << 3, 1);
         netPad.setInput(inpx, "inpx");
         netPad.setInput(inpa, "inpa");
         netPad.setInput(inpb, "inpb");
         Mat c = netPad.forward();
     }
+    {
+        // Net netAdd = readNet("C:/Users/laurent/Downloads/saved_model.pb");
+    }
+
+
+
     CommandLineParser parser(argc, argv, keys);
 
     const std::string modelName = parser.get<String>("@alias");

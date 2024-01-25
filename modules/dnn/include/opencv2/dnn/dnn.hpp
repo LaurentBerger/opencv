@@ -150,6 +150,7 @@ CV__DNN_INLINE_NS_BEGIN
 
         String name; //!< Name of the layer instance (optional, can be used internal purposes).
         String type; //!< Type name which was used for creating layer by layer factory (optional).
+        bool inferenceShape; //!< inferenceShape true when layer shape is known at inference.
     };
 
    /**
@@ -453,8 +454,8 @@ CV__DNN_INLINE_NS_BEGIN
 
         CV_PROP String name; //!< Name of the layer instance, can be used for logging or other internal purposes.
         CV_PROP String type; //!< Type name which was used for creating layer by layer factory.
-        CV_PROP bool hasDynamicShape; //!< hasDynamicShape true when layer output size is not known when network is loaded.
         CV_PROP int preferableTarget; //!< prefer target for layer forwarding
+        CV_PROP bool inferenceShape; //!< inferenceShape true when layer output size is not known when network is loaded.
 
         Layer();
         explicit Layer(const LayerParams &params);      //!< Initializes only #name, #type and #blobs fields.
@@ -877,6 +878,17 @@ CV__DNN_INLINE_NS_BEGIN
          */
         CV_WRAP int64 getPerfProfile(CV_OUT std::vector<double>& timings);
 
+
+        /** @brief use when layer shape is known at inference.
+         * @param val true when shape is known at infeerence false otherwise (default).
+         */
+        void setInferenceShape(bool val);
+
+        /** @brief Returns count of layers of specified type.
+         * @param layerType type.
+         * @returns count of layers
+         */
+        bool getInferenceShape();
 
         struct Impl;
         inline Impl* getImpl() const { return impl.get(); }
